@@ -1,45 +1,66 @@
-# Getting Started with Create React App
+# Chef Finder
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A job board platform connecting culinary professionals with employers. Find or post chef jobs, browse company reviews, and explore salary guides.
 
-## Available Scripts
+## What is this?
 
-In the project directory, you can run:
+Chef Finder helps chefs find job opportunities and helps employers find talented culinary professionals. You can browse jobs, view company reviews, check salary guides, and manage your profile through dedicated dashboards.
 
-### `npm start`
+## Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js (version 14 or higher)
+- npm or yarn
 
-### `npm run build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Running the App
 
-### `npm run test`
+Start the development server:
+```bash
+npm run dev
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The app will open at `http://localhost:3000`
 
-### `npm run eject`
+### Building for Production
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Create a production build:
+```bash
+npm run build
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Preview the production build:
+```bash
+npm run preview
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Features
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Browse chef job listings
+- View detailed job information
+- Register as a job seeker or employer
+- Access employer and user dashboards
+- Read company reviews
+- Explore salary guides
 
-## Learn More
+## Tech Stack
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- React
+- Vite
+- React Router
+- Bootstrap
+- Axios
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Project Structure
 
+- `src/components/` - Reusable React components
+- `src/pages/` - Page components
+- `src/core/` - Core utilities, services, and constants
