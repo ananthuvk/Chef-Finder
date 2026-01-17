@@ -1,15 +1,15 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import SignIn from './components/SignIn';
-import Register from './components/Register';
-import Jobs from './components/Jobs';
-import JobDetails from './components/JobDetails';
-import Employers from './components/Employers';
-import CompanyReviews from './components/CompanyReviews';
-import SalaryGuide from './components/SalaryGuide';
-import EmployerDashboard from './components/EmployerDashboard';
-import UserDashboard from './components/UserDashboard';
+import Home from './pages/Home.jsx';
+import SignIn from './components/SignIn.jsx';
+import Register from './components/Register.jsx';
+import Jobs from './components/Jobs.jsx';
+import JobDetails from './components/JobDetails.jsx';
+import Employers from './components/Employers.jsx';
+import CompanyReviews from './components/CompanyReviews.jsx';
+import SalaryGuide from './components/SalaryGuide.jsx';
+import EmployerDashboard from './components/EmployerDashboard.jsx';
+import UserDashboard from './components/UserDashboard.jsx';
 
 function App() {
   return (

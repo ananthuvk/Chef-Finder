@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
+import SearchSection from './SearchSection.jsx';
 import './Jobs.css';
-import Header from './Header';
-import Footer from './Footer';
-import SearchSection from './SearchSection';
 
 function Jobs() {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'

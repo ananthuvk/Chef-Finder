@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
 import './SalaryGuide.css';
-import Header from './Header';
-import Footer from './Footer';
 
 function SalaryGuide() {
   const [selectedCategory, setSelectedCategory] = useState('all');

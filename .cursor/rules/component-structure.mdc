@@ -1,0 +1,292 @@
+---
+description: Component structure patterns and organization rules
+globs: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+alwaysApply: false
+priority: 2
+---
+
+# Component Structure Rules
+
+## Component File Organization
+
+### ✅ CORRECT: Standard Component Structure
+
+```javascript
+// ComponentName.jsx
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
+import './ComponentName.css';
+
+function ComponentName() {
+  // 1. Hooks declarations
+  const navigate = useNavigate();
+  const [state, setState] = useState(null);
+  const ref = useRef(null);
+
+  // 2. useEffect hooks
+  useEffect(() => {
+    // Side effects
+    return () => {
+      // Cleanup
+    };
+  }, []);
+
+  // 3. Event handlers
+  const handleClick = () => {
+    // Handler logic
+  };
+
+  // 4. Helper functions
+  const helperFunction = () => {
+    // Helper logic
+  };
+
+  // 5. Render
+  return (
+    <div className="component-name">
+      {/* Component JSX */}
+    </div>
+  );
+}
+
+export default ComponentName;
+```
+
+## Component Types
+
+### Page-Level Components
+
+Page components should include Header and Footer:
+
+```javascript
+// pages/Home.jsx
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header.jsx';
+import Footer from '../components/Footer.jsx';
+import SearchSection from '../components/SearchSection.jsx';
+import logo from '../assets/images/logo.png';
+import '../App.css';
+
+function Home() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="App">
+      <Header />
+      <SearchSection />
+      <main className="main-content">
+        {/* Page content */}
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export default Home;
+```
+
+### Reusable Components
+
+Components in `src/components/` should be self-contained:
+
+```javascript
+// components/Header.jsx
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import logo from '../assets/images/logo.png';
+import './Header.css';
+
+function Header() {
+  // Component-specific logic
+  return (
+    <nav className="navbar">
+      {/* Header content */}
+    </nav>
+  );
+}
+
+export default Header;
+```
+
+## Component Structure Checklist
+
+When creating a component, ensure:
+
+- [ ] File name matches component name (PascalCase)
+- [ ] Component function name matches file name
+- [ ] Matching CSS file exists (ComponentName.css)
+- [ ] Imports are organized correctly
+- [ ] Hooks are declared at the top
+- [ ] Event handlers are defined before render
+- [ ] Component is exported as default
+- [ ] No unused imports
+
+## Hooks Usage Patterns
+
+### useState Pattern
+
+```javascript
+// ✅ CORRECT: Initialize with appropriate default
+const [email, setEmail] = useState('');
+const [user, setUser] = useState(null);
+const [items, setItems] = useState([]);
+const [loading, setLoading] = useState(false);
+
+// ❌ WRONG: Missing default or wrong type
+const [email, setEmail] = useState(); // Should have default
+const [count, setCount] = useState('0'); // Wrong type (should be number)
+```
+
+### useEffect Pattern
+
+```javascript
+// ✅ CORRECT: Proper cleanup
+useEffect(() => {
+  const handleClick = (event) => {
+    // Handle click
+  };
+  
+  document.addEventListener('click', handleClick);
+  
+  return () => {
+    document.removeEventListener('click', handleClick);
+  };
+}, []);
+
+// ✅ CORRECT: Dependency array
+useEffect(() => {
+  // Effect runs when location changes
+}, [location]);
+
+// ❌ WRONG: Missing cleanup for subscriptions
+useEffect(() => {
+  document.addEventListener('click', handleClick);
+  // Missing cleanup - memory leak!
+}, []);
+```
+
+### useRef Pattern
+
+```javascript
+// ✅ CORRECT: Using refs for DOM access
+const dropdownRef = useRef(null);
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      // Close dropdown
+    }
+  };
+  
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
+
+return (
+  <div ref={dropdownRef}>
+    {/* Dropdown content */}
+  </div>
+);
+```
+
+## Navigation Patterns
+
+### ✅ CORRECT: Using useNavigate
+
+```javascript
+import { useNavigate } from 'react-router-dom';
+
+function MyComponent() {
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    navigate('/jobs');
+  };
+
+  const handleJobClick = (job) => {
+    navigate(`/jobs/${job.id}`, { state: { job } });
+  };
+
+  return (
+    <button onClick={handleButtonClick}>Go to Jobs</button>
+  );
+}
+```
+
+### ✅ CORRECT: Using Link Component
+
+```javascript
+import { Link } from 'react-router-dom';
+
+function Navigation() {
+  return (
+    <nav>
+      <Link to="/">Home</Link>
+      <Link to="/jobs">Jobs</Link>
+      <Link to="/employers">Employers</Link>
+    </nav>
+  );
+}
+```
+
+## Component Props Pattern
+
+```javascript
+// ✅ CORRECT: Destructuring props
+function JobCard({ job, onJobClick }) {
+  return (
+    <div onClick={() => onJobClick(job)}>
+      <h3>{job.title}</h3>
+      <p>{job.company}</p>
+    </div>
+  );
+}
+
+// ❌ WRONG: Accessing props without destructuring
+function JobCard(props) {
+  return (
+    <div onClick={() => props.onJobClick(props.job)}>
+      <h3>{props.job.title}</h3>
+    </div>
+  );
+}
+```
+
+## Conditional Rendering Patterns
+
+```javascript
+// ✅ CORRECT: Conditional rendering
+{isSignedIn ? (
+  <UserMenu />
+) : (
+  <SignInButton />
+)}
+
+// ✅ CORRECT: Conditional rendering with null
+{user && (
+  <UserProfile user={user} />
+)}
+
+// ✅ CORRECT: Conditional class names
+<button className={`btn ${isActive ? 'active' : ''}`}>
+  Click me
+</button>
+
+// ❌ WRONG: Inline complex conditions
+{isSignedIn && user && user.type === 'employer' && user.active ? (
+  <EmployerDashboard />
+) : null}
+// Better: Extract to variable
+```
+
+## Remember
+
+- **Always** follow the hook order: useState → useEffect → useRef → other hooks
+- **Always** include cleanup in useEffect when adding event listeners or subscriptions
+- **Always** use functional components
+- **Always** export components as default
+- **Always** match component name with file name
+- **Always** create matching CSS file for styling

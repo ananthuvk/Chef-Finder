@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../App.css';
+import Header from '../components/Header.jsx';
+import Footer from '../components/Footer.jsx';
+import SearchSection from '../components/SearchSection.jsx';
 import logo from '../assets/images/CHEF_FINDER.png';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import SearchSection from '../components/SearchSection';
+import '../App.css';
 
 function Home() {
   const navigate = useNavigate();

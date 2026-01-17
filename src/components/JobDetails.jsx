@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
 import './JobDetails.css';
-import Header from './Header';
-import Footer from './Footer';
 
 function JobDetails() {
   const navigate = useNavigate();

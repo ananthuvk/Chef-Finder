@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
 import './SignIn.css';
-import Header from './Header';
-import Footer from './Footer';
 
 function SignIn() {
   const [email, setEmail] = useState('');

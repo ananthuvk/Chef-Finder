@@ -1,0 +1,156 @@
+---
+description: Master rules file with critical rules that always apply
+globs: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.css"]
+alwaysApply: true
+priority: 1
+---
+
+# Chef Finder Frontend - Master Rules
+
+## CRITICAL: Absolute Requirements - NO EXCEPTIONS
+
+1. **React Functional Components Only** - Always use functional components with hooks. No class components.
+2. **File Naming Convention** - Use PascalCase for component files with `.jsx` extension: `ComponentName.jsx` (all JSX files must use `.jsx` extension)
+3. **Component Structure** - Each component must have its own CSS file with matching name: `ComponentName.css`
+4. **Routing** - Use React Router DOM v7 (`react-router-dom`) for all navigation
+5. **State Management** - Use React hooks (`useState`, `useEffect`) for local state. Use `localStorage` for persistence (currently demo mode)
+6. **Import Organization** - Group imports: React imports first, then third-party, then local components, then CSS files
+7. **No Mock Data in Production** - Hardcoded data is only acceptable for demo purposes. Always prepare for API integration.
+
+## Prohibited Patterns - NEVER DO THIS
+
+### ❌ WRONG: Class Components
+```javascript
+// NEVER use class components
+class MyComponent extends React.Component {
+  render() {
+    return <div>Content</div>;
+  }
+}
+```
+
+### ❌ WRONG: Inline Styles (except for dynamic values)
+```javascript
+// Avoid inline styles for static styling
+<div style={{ color: 'red', padding: '10px' }}>Content</div>
+```
+
+### ❌ WRONG: Missing CSS File
+```javascript
+// Every component must have a corresponding CSS file
+function Component() {
+  return <div className="component">Content</div>;
+}
+// Missing: Component.css
+```
+
+### ❌ WRONG: Improper Import Order
+```javascript
+// WRONG import order
+import './Component.css';
+import React from 'react';
+import { useState } from 'react';
+import Header from './Header';
+```
+
+### ❌ WRONG: Hardcoded API Data (in production-ready code)
+```javascript
+// When API is ready, remove hardcoded data
+const [jobs] = useState([{ id: 1, title: 'Job 1' }]);
+```
+
+## ✅ CORRECT: Component Pattern
+
+```javascript
+// ComponentName.jsx
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
+import './ComponentName.css';
+
+function ComponentName() {
+  const navigate = useNavigate();
+  const [state, setState] = useState(null);
+
+  useEffect(() => {
+    // Side effects here
+  }, []);
+
+  return (
+    <div className="component-name">
+      <Header />
+      {/* Component content */}
+      <Footer />
+    </div>
+  );
+}
+
+export default ComponentName;
+```
+
+## ✅ CORRECT: Import Organization
+
+```javascript
+// 1. React and React hooks
+import React, { useState, useEffect, useRef } from 'react';
+
+// 2. React Router
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+
+// 3. Third-party libraries
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// 4. Local components (must include .jsx extension)
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
+import SearchSection from './SearchSection.jsx';
+
+// 5. Assets (images, etc.)
+import logo from '../assets/images/logo.png';
+
+// 6. CSS files (last)
+import './ComponentName.css';
+```
+
+## File Structure Rules
+
+1. **Components** - Place in `src/components/` with matching CSS file
+2. **Pages** - Place in `src/pages/` with matching CSS file (if needed)
+3. **Assets** - Place images in `src/assets/images/`
+4. **Styles** - Global styles in `src/index.css`, component styles in component CSS files
+5. **Entry Point** - `src/main.jsx` (Vite requirement, not `index.js`)
+
+## Navigation Rules
+
+- Always use `useNavigate()` hook from `react-router-dom`
+- Use `Link` component for internal links
+- Use `navigate('/path')` for programmatic navigation
+- Pass state via `navigate('/path', { state: { data } })` when needed
+
+## State Management Rules
+
+- Use `useState` for component-local state
+- Use `useEffect` for side effects and data fetching (when API is ready)
+- Use `localStorage` for persistence (demo mode)
+- Always provide default values for state initialization
+
+## Vite-Specific Requirements
+
+1. **File Extensions** - All files containing JSX must use `.jsx` extension (not `.js`)
+2. **Import Extensions** - Must include `.jsx` extension in all component imports: `import Header from './Header.jsx'`
+3. **Entry Point** - Entry file is `src/main.jsx` (referenced in `index.html` at root)
+4. **Build Tool** - Uses Vite, not Create React App
+5. **Dev Server** - Run with `npm run dev` (not `npm start`)
+
+## Remember
+
+- **Always** include Header and Footer in page-level components
+- **Always** use CSS classes, not inline styles for static styling
+- **Always** use PascalCase for component names and files
+- **Always** use `.jsx` extension for files containing JSX
+- **Always** include `.jsx` extension in component imports
+- **Always** export components as default exports
+- **Always** use functional components, never class components
+- **Always** organize imports in the specified order
+- **Always** include cleanup in useEffect when needed (event listeners, intervals, etc.)

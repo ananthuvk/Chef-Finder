@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
 import './UserDashboard.css';
-import Header from './Header';
-import Footer from './Footer';
 
 function UserDashboard() {
   const navigate = useNavigate();

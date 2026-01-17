@@ -1,0 +1,352 @@
+---
+description: Data handling patterns, state management, and data initialization
+globs: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+alwaysApply: false
+priority: 3
+---
+
+# Data Handling Rules
+
+## State Initialization
+
+### ✅ CORRECT: Proper State Initialization
+
+```javascript
+// ✅ CORRECT: Initialize with appropriate defaults
+const [email, setEmail] = useState('');
+const [user, setUser] = useState(null);
+const [jobs, setJobs] = useState([]);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState(null);
+const [isSignedIn, setIsSignedIn] = useState(false);
+
+// ✅ CORRECT: Initialize from localStorage (demo mode)
+const [userData, setUserData] = useState(() => {
+  const stored = localStorage.getItem('userData');
+  return stored ? JSON.parse(stored) : null;
+});
+
+// ❌ WRONG: Missing default values
+const [email, setEmail] = useState(); // Should have default ''
+const [user, setUser] = useState(); // Should have default null
+```
+
+## Loading States
+
+### ✅ CORRECT: Loading State Pattern
+
+```javascript
+function Jobs() {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // TODO: Replace with API call
+        // const data = await jobService.getJobs();
+        // setJobs(data);
+        
+        // Current demo mode
+        const storedJobs = localStorage.getItem('jobs');
+        setJobs(storedJobs ? JSON.parse(storedJobs) : []);
+      } catch (err) {
+        setError(err.message || 'Failed to load jobs');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  if (loading) {
+    return <div className="loading">Loading jobs...</div>;
+  }
+
+  if (error) {
+    return <div className="error">Error: {error}</div>;
+  }
+
+  return (
+    <div>
+      {jobs.map(job => (
+        <div key={job.id}>{job.title}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Empty State Handling
+
+### ✅ CORRECT: Empty State Pattern
+
+```javascript
+function Jobs() {
+  const [jobs, setJobs] = useState([]);
+
+  // ... fetch jobs logic
+
+  return (
+    <div>
+      {jobs.length === 0 ? (
+        <div className="empty-state">
+          <p>No jobs available at the moment.</p>
+          <button onClick={() => navigate('/jobs')}>
+            Browse All Jobs
+          </button>
+        </div>
+      ) : (
+        jobs.map(job => (
+          <div key={job.id}>{job.title}</div>
+        ))
+      )}
+    </div>
+  );
+}
+```
+
+## Error State Handling
+
+### ✅ CORRECT: Error State Pattern
+
+```javascript
+function JobDetails() {
+  const [job, setJob] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJob = async () => {
+      try {
+        setError(null);
+        // Fetch job data
+        // const data = await jobService.getJobById(id);
+        setJob(jobData);
+      } catch (err) {
+        setError(err.message || 'Failed to load job details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJob();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  
+  if (error) {
+    return (
+      <div className="error-state">
+        <h3>Something went wrong</h3>
+        <p>{error}</p>
+        <button onClick={() => navigate('/jobs')}>
+          Back to Jobs
+        </button>
+      </div>
+    );
+  }
+
+  if (!job) {
+    return <div>Job not found</div>;
+  }
+
+  return <div>{/* Job details */}</div>;
+}
+```
+
+## localStorage Patterns (Demo Mode)
+
+### ✅ CORRECT: localStorage Usage
+
+```javascript
+// ✅ CORRECT: Safe localStorage reading
+useEffect(() => {
+  const stored = localStorage.getItem('userData');
+  if (stored) {
+    try {
+      const userData = JSON.parse(stored);
+      setUserData(userData);
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      localStorage.removeItem('userData');
+    }
+  }
+}, []);
+
+// ✅ CORRECT: Safe localStorage writing
+const handleSave = (data) => {
+  try {
+    localStorage.setItem('userData', JSON.stringify(data));
+    setUserData(data);
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+    // Handle quota exceeded or other errors
+  }
+};
+
+// ✅ CORRECT: Clearing localStorage
+const handleLogout = () => {
+  localStorage.removeItem('isSignedIn');
+  localStorage.removeItem('userType');
+  localStorage.removeItem('userData');
+  navigate('/');
+};
+
+// ❌ WRONG: Unsafe localStorage access
+const userData = JSON.parse(localStorage.getItem('userData')); // Could throw error
+```
+
+## Data Updates and State Management
+
+### ✅ CORRECT: Updating State
+
+```javascript
+// ✅ CORRECT: Functional updates for complex state
+setUser(prev => ({
+  ...prev,
+  email: newEmail,
+  name: newName
+}));
+
+// ✅ CORRECT: Array updates
+setJobs(prev => [...prev, newJob]);
+setJobs(prev => prev.filter(job => job.id !== idToRemove));
+setJobs(prev => prev.map(job => 
+  job.id === idToUpdate ? { ...job, ...updates } : job
+));
+
+// ❌ WRONG: Mutating state directly
+user.email = newEmail; // Wrong - never mutate state directly
+setUser(user);
+```
+
+## Form Data Handling
+
+### ✅ CORRECT: Form State Pattern
+
+```javascript
+function JobForm() {
+  const [formData, setFormData] = useState({
+    title: '',
+    company: '',
+    location: '',
+    salary: '',
+    description: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate form data
+    if (!formData.title || !formData.company) {
+      alert('Please fill in required fields');
+      return;
+    }
+
+    try {
+      // Submit form data
+      // await jobService.createJob(formData);
+      console.log('Form submitted:', formData);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+      />
+      {/* Other fields */}
+    </form>
+  );
+}
+```
+
+## No Mock Data Rule
+
+### ✅ CORRECT: Preparing for Real Data
+
+```javascript
+// ✅ CORRECT: Structure for easy API integration
+const [jobs, setJobs] = useState([]);
+
+useEffect(() => {
+  // Currently demo data (will be replaced with API)
+  // TODO: Replace with API call when ready
+  // const fetchJobs = async () => {
+  //   const data = await jobService.getJobs();
+  //   setJobs(data);
+  // };
+  // fetchJobs();
+  
+  // Demo mode: Initialize with empty array or localStorage
+  const stored = localStorage.getItem('jobs');
+  setJobs(stored ? JSON.parse(stored) : []);
+}, []);
+
+// ❌ WRONG: Hardcoded production data
+const [jobs] = useState([
+  { id: 1, title: 'Job 1' },
+  { id: 2, title: 'Job 2' }
+]); // Remove when API is ready
+```
+
+## Data Validation
+
+### ✅ CORRECT: Client-Side Validation
+
+```javascript
+const validateForm = (data) => {
+  const errors = {};
+
+  if (!data.email || !data.email.includes('@')) {
+    errors.email = 'Valid email is required';
+  }
+
+  if (!data.password || data.password.length < 6) {
+    errors.password = 'Password must be at least 6 characters';
+  }
+
+  return errors;
+};
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const errors = validateForm(formData);
+  
+  if (Object.keys(errors).length > 0) {
+    setFormErrors(errors);
+    return;
+  }
+
+  // Submit form
+};
+```
+
+## Remember
+
+- **Always** initialize state with appropriate default values
+- **Always** handle loading, error, and empty states
+- **Always** use functional updates when new state depends on previous state
+- **Always** safely parse JSON from localStorage
+- **Always** validate data before processing
+- **Never** mutate state directly
+- **Never** leave hardcoded mock data in production code
+- **Always** prepare code structure for API integration

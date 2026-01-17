@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import './Header.css';
 import logo from '../assets/images/CHEF_FINDER.png';
+import './Header.css';
 
 function Header() {
   const location = useLocation();

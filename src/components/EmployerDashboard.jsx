@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
 import './EmployerDashboard.css';
-import Header from './Header';
-import Footer from './Footer';
 
 function EmployerDashboard() {
   const navigate = useNavigate();

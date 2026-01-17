@@ -1,0 +1,351 @@
+---
+description: Coding standards, naming conventions, and code quality guidelines
+globs: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.css"]
+alwaysApply: false
+priority: 3
+---
+
+# Coding Standards
+
+## Naming Conventions
+
+### Files and Components
+
+```javascript
+// ✅ CORRECT: PascalCase for components with .jsx extension
+// Header.jsx, UserDashboard.jsx, JobDetails.jsx
+function UserDashboard() { }
+
+// ❌ WRONG: camelCase, kebab-case, or .js extension for JSX files
+// userDashboard.jsx, user-dashboard.jsx, Header.js (if contains JSX)
+```
+
+### Variables and Functions
+
+```javascript
+// ✅ CORRECT: camelCase for variables and functions
+const userName = 'John';
+const isSignedIn = true;
+const handleSubmit = () => { };
+const getUserData = () => { };
+
+// ❌ WRONG: PascalCase for variables (only for components)
+const UserName = 'John'; // Wrong - only components use PascalCase
+```
+
+### Constants
+
+```javascript
+// ✅ CORRECT: UPPER_SNAKE_CASE for constants
+const API_BASE_URL = 'https://api.example.com';
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const DEFAULT_USER_TYPE = 'chef';
+
+// ✅ CORRECT: camelCase for const objects
+const demoCredentials = {
+  employer: ['employer@example.com'],
+  chef: ['chef@example.com']
+};
+```
+
+### CSS Classes
+
+```javascript
+// ✅ CORRECT: kebab-case for CSS classes
+<div className="user-dashboard">
+  <div className="job-card-header">
+    <span className="job-posted-date">Posted 2 days ago</span>
+  </div>
+</div>
+
+// ❌ WRONG: camelCase in CSS classes
+<div className="userDashboard"> // Wrong
+```
+
+## Import Organization
+
+### ✅ CORRECT: Import Order
+
+```javascript
+// 1. React imports (always first)
+import React, { useState, useEffect, useRef } from 'react';
+
+// 2. React Router imports
+import { useNavigate, useLocation, Link, useSearchParams } from 'react-router-dom';
+
+// 3. Third-party library imports
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// 4. Local component imports (must include .jsx extension)
+import Header from './Header.jsx';
+import Footer from './Footer.jsx';
+import SearchSection from './SearchSection.jsx';
+
+// 5. Asset imports (images, etc.)
+import logo from '../assets/images/CHEF_FINDER.png';
+
+// 6. CSS imports (last)
+import './ComponentName.css';
+```
+
+### ❌ WRONG: Mixed Import Order
+
+```javascript
+// Don't mix imports randomly
+import './Component.css';
+import React from 'react';
+import Header from './Header';
+import { useState } from 'react';
+```
+
+## Code Formatting
+
+### Indentation and Spacing
+
+```javascript
+// ✅ CORRECT: 2 spaces for indentation
+function MyComponent() {
+  const [state, setState] = useState(null);
+
+  const handleClick = () => {
+    setState('new value');
+  };
+
+  return <div className="my-component">Content</div>;
+}
+
+// ❌ WRONG: Inconsistent indentation
+function MyComponent() {
+    const [state, setState] = useState(null);
+  const handleClick = () => {
+      setState('new value');
+  };
+}
+```
+
+### Semicolons
+
+```javascript
+// ✅ CORRECT: Use semicolons consistently
+const name = 'John';
+const handleClick = () => {
+  console.log('clicked');
+};
+
+// Either use semicolons everywhere or nowhere (project uses them)
+```
+
+### Quotes
+
+```javascript
+// ✅ CORRECT: Use single quotes for JavaScript strings
+const name = 'John';
+const className = 'my-class';
+
+// ✅ CORRECT: Use double quotes for JSX attributes (when needed)
+<div className="my-component">
+  <button onClick={handleClick}>Click me</button>
+</div>
+
+// ✅ CORRECT: Template literals for dynamic strings
+const message = `Hello, ${name}!`;
+```
+
+## React Best Practices
+
+### Event Handlers
+
+```javascript
+// ✅ CORRECT: Named handler functions
+const handleSubmit = (e) => {
+  e.preventDefault();
+  // Submit logic
+};
+
+return <form onSubmit={handleSubmit}>...</form>;
+
+// ✅ CORRECT: Inline arrow function for simple cases
+<button onClick={() => navigate('/jobs')}>Jobs</button>;
+
+// ❌ WRONG: Anonymous function that should be extracted
+<button onClick={(e) => {
+  e.preventDefault();
+  console.log('complex logic');
+  setState('value');
+  navigate('/path');
+}}>
+  Click
+</button>
+// Better: Extract to named function
+```
+
+### Key Props in Lists
+
+```javascript
+// ✅ CORRECT: Use unique IDs as keys
+{jobs.map(job => (
+  <div key={job.id}>
+    <h3>{job.title}</h3>
+  </div>
+))}
+
+// ❌ WRONG: Using index as key (unless list is static)
+{jobs.map((job, index) => (
+  <div key={index}> // Wrong if items can be reordered
+    <h3>{job.title}</h3>
+  </div>
+))}
+```
+
+### Inline Styles vs CSS Classes
+
+```javascript
+// ✅ CORRECT: Use CSS classes for static styles
+<div className="job-card">
+  <h3 className="job-title">{job.title}</h3>
+</div>
+
+// ✅ CORRECT: Use inline styles for dynamic values
+<div style={{ maxHeight: `${height}px`, color: dynamicColor }}>
+  Content
+</div>
+
+// ❌ WRONG: Inline styles for static values
+<div style={{ color: 'red', padding: '10px', margin: '20px' }}>
+  Content // Should be in CSS file
+</div>
+```
+
+## CSS Standards
+
+### Class Naming
+
+```css
+/* ✅ CORRECT: kebab-case with component prefix */
+.user-dashboard {
+  padding: 20px;
+}
+
+.user-dashboard-header {
+  display: flex;
+}
+
+.user-dashboard-nav-item {
+  padding: 10px;
+}
+
+.user-dashboard-nav-item.active {
+  background-color: #0e78b7;
+}
+
+/* ❌ WRONG: Generic or camelCase */
+.userDashboard { } /* Wrong */
+.header { } /* Too generic, could conflict */
+```
+
+### CSS Organization
+
+```css
+/* Component: ComponentName.css */
+
+/* 1. Main container */
+.component-name {
+  /* Container styles */
+}
+
+/* 2. Header section */
+.component-name-header {
+  /* Header styles */
+}
+
+.component-name-title {
+  /* Title styles */
+}
+
+/* 3. Content section */
+.component-name-content {
+  /* Content styles */
+}
+
+/* 4. Footer section */
+.component-name-footer {
+  /* Footer styles */
+}
+
+/* 5. Responsive styles */
+@media (max-width: 767.98px) {
+  .component-name {
+    /* Mobile styles */
+  }
+}
+```
+
+## Code Comments
+
+```javascript
+// ✅ CORRECT: Explain why, not what
+// Check if user is signed in from localStorage (demo mode)
+const signedIn = localStorage.getItem('isSignedIn') === 'true';
+
+// Store in localStorage (in a real app, you'd upload to a server)
+localStorage.setItem('userResume', file.name);
+
+// ❌ WRONG: Obvious comments
+// Set email to user email
+setEmail(user.email); // Obvious from code
+
+// Clean up the preview URL
+if (resumePreviewUrl) {
+  URL.revokeObjectURL(resumePreviewUrl); // Comment adds no value
+}
+```
+
+## Performance Guidelines
+
+### Memoization (When Needed)
+
+```javascript
+// ✅ CORRECT: Use useMemo for expensive calculations
+const expensiveValue = useMemo(() => {
+  return jobs.filter(job => job.salary > 50000);
+}, [jobs]);
+
+// ✅ CORRECT: Use useCallback for stable function references
+const handleClick = useCallback(() => {
+  navigate('/jobs');
+}, [navigate]);
+
+// Don't overuse - only when performance is actually needed
+```
+
+### Avoid Unnecessary Re-renders
+
+```javascript
+// ✅ CORRECT: Extract components to prevent re-renders
+function JobList({ jobs }) {
+  return (
+    <div>
+      {jobs.map(job => (
+        <JobCard key={job.id} job={job} />
+      ))}
+    </div>
+  );
+}
+
+// JobCard only re-renders when its job prop changes
+function JobCard({ job }) {
+  return <div>{job.title}</div>;
+}
+```
+
+## Remember
+
+- **Always** use PascalCase for components and files
+- **Always** use `.jsx` extension for files containing JSX (required for Vite)
+- **Always** include `.jsx` extension in component imports
+- **Always** use camelCase for variables and functions
+- **Always** use kebab-case for CSS classes
+- **Always** organize imports in the specified order
+- **Always** use meaningful variable and function names
+- **Always** prefer CSS classes over inline styles for static styling
+- **Always** include comments for non-obvious logic

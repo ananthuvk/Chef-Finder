@@ -1,0 +1,351 @@
+---
+description: Form validation patterns and error handling
+globs: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+alwaysApply: false
+priority: 4
+---
+
+# Validation Rules
+
+## Form Validation Patterns
+
+### ✅ CORRECT: Basic Validation Pattern
+
+```javascript
+function SignInForm() {
+  const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const validateEmail = (email) => {
+    if (!email) {
+      return 'Email is required';
+    }
+    if (!email.includes('@')) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  };
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    
+    if (field === 'email') {
+      const error = validateEmail(email);
+      setErrors(prev => ({ ...prev, email: error }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validate all fields
+    const emailError = validateEmail(email);
+    
+    if (emailError) {
+      setErrors({ email: emailError });
+      setTouched({ email: true });
+      return;
+    }
+
+    // Submit form
+    console.log('Form is valid');
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          onBlur={() => handleBlur('email')}
+        />
+        {touched.email && errors.email && (
+          <span className="error-message">{errors.email}</span>
+        )}
+      </div>
+    </form>
+  );
+}
+```
+
+### ✅ CORRECT: Comprehensive Form Validation
+
+```javascript
+function JobPostForm() {
+  const [formData, setFormData] = useState({
+    title: '',
+    company: '',
+    location: '',
+    salary: '',
+    description: '',
+    email: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'title':
+        if (!value.trim()) return 'Job title is required';
+        if (value.length < 3) return 'Title must be at least 3 characters';
+        break;
+      case 'company':
+        if (!value.trim()) return 'Company name is required';
+        break;
+      case 'email':
+        if (!value) return 'Email is required';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          return 'Please enter a valid email address';
+        }
+        break;
+      case 'salary':
+        if (value && !/^\$?\d+(-\$?\d+)?$/.test(value)) {
+          return 'Please enter a valid salary range (e.g., $50,000 - $70,000)';
+        }
+        break;
+      default:
+        return '';
+    }
+    return '';
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    // Clear error when user starts typing
+    if (errors[name] && touched[name]) {
+      const error = validateField(name, value);
+      setErrors(prev => ({ ...prev, [name]: error }));
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    const error = validateField(field, formData[field]);
+    setErrors(prev => ({ ...prev, [field]: error }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) newErrors[field] = error;
+    });
+
+    setErrors(newErrors);
+    setTouched(
+      Object.keys(formData).reduce((acc, key) => ({ ...acc, [key]: true }), {})
+    );
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    // Submit form
+    console.log('Form submitted:', formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <input
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          onBlur={() => handleBlur('title')}
+          className={touched.title && errors.title ? 'error' : ''}
+        />
+        {touched.title && errors.title && (
+          <span className="error-message">{errors.title}</span>
+        )}
+      </div>
+      {/* Other form fields */}
+    </form>
+  );
+}
+```
+
+## File Upload Validation
+
+### ✅ CORRECT: File Validation Pattern
+
+```javascript
+const handleFileUpload = (e) => {
+  const file = e.target.files[0];
+  
+  if (!file) return;
+
+  // Validate file type
+  const allowedTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+  
+  if (!allowedTypes.includes(file.type)) {
+    alert('Please upload a PDF or Word document');
+    return;
+  }
+
+  // Validate file size (max 5MB)
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  if (file.size > maxSize) {
+    alert('File size should be less than 5MB');
+    return;
+  }
+
+  // Process file
+  setResumeFile(file);
+};
+```
+
+## Displaying Validation Errors
+
+### ✅ CORRECT: Error Display Pattern
+
+```javascript
+// In JSX
+<div className="form-field">
+  <label htmlFor="email">Email *</label>
+  <input
+    id="email"
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    onBlur={() => handleBlur('email')}
+    className={touched.email && errors.email ? 'input-error' : ''}
+    aria-invalid={touched.email && errors.email ? 'true' : 'false'}
+    aria-describedby={touched.email && errors.email ? 'email-error' : undefined}
+  />
+  {touched.email && errors.email && (
+    <span id="email-error" className="error-message" role="alert">
+      {errors.email}
+    </span>
+  )}
+</div>
+```
+
+## Validation Utility Functions
+
+### ✅ CORRECT: Reusable Validation Functions
+
+```javascript
+// src/utils/validation.js
+
+export const validators = {
+  required: (value, fieldName = 'Field') => {
+    if (!value || !value.trim()) {
+      return `${fieldName} is required`;
+    }
+    return '';
+  },
+
+  email: (value) => {
+    if (!value) return 'Email is required';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  },
+
+  minLength: (value, min, fieldName = 'Field') => {
+    if (!value || value.length < min) {
+      return `${fieldName} must be at least ${min} characters`;
+    }
+    return '';
+  },
+
+  maxLength: (value, max, fieldName = 'Field') => {
+    if (value && value.length > max) {
+      return `${fieldName} must be no more than ${max} characters`;
+    }
+    return '';
+  },
+
+  phone: (value) => {
+    if (!value) return '';
+    const phoneRegex = /^[\d\s\-\(\)]+$/;
+    if (!phoneRegex.test(value)) {
+      return 'Please enter a valid phone number';
+    }
+    return '';
+  },
+
+  url: (value) => {
+    if (!value) return '';
+    try {
+      new URL(value);
+      return '';
+    } catch {
+      return 'Please enter a valid URL';
+    }
+  }
+};
+
+// Usage
+import { validators } from '../utils/validation';
+
+const validateForm = (data) => {
+  const errors = {};
+  
+  errors.email = validators.email(data.email);
+  errors.title = validators.required(data.title, 'Job title');
+  errors.title = errors.title || validators.minLength(data.title, 3, 'Job title');
+  
+  return errors;
+};
+```
+
+## Prohibited Patterns
+
+### ❌ WRONG: No Validation
+
+```javascript
+// Don't submit without validation
+const handleSubmit = (e) => {
+  e.preventDefault();
+  // Missing validation
+  submitForm(formData); // Dangerous
+};
+```
+
+### ❌ WRONG: Alert for Validation
+
+```javascript
+// Avoid using alert for validation errors
+if (!email) {
+  alert('Email is required'); // Poor UX
+  return;
+}
+// Better: Display inline error message
+```
+
+### ❌ WRONG: Validation Only on Submit
+
+```javascript
+// Don't wait until submit to show errors
+// Provide feedback as user interacts
+```
+
+## Remember
+
+- **Always** validate required fields
+- **Always** provide clear, helpful error messages
+- **Always** show errors inline near the field
+- **Always** validate on blur, not just on submit
+- **Always** clear errors when user starts correcting
+- **Always** validate file types and sizes for uploads
+- **Always** use accessible error messaging (aria-invalid, role="alert")
+- **Never** use alert() for validation errors (use inline messages)
+- **Never** submit forms without validation

@@ -1,0 +1,98 @@
+---
+description: Rules index and overview for Chef Finder Frontend project
+globs: ["**/*"]
+alwaysApply: false
+priority: 1
+---
+
+# Chef Finder Frontend - Rules Documentation
+
+## Overview
+
+This directory contains comprehensive rules for maintaining code consistency and best practices across the Chef Finder Frontend project. These rules guide the AI assistant in generating code that matches the project's architecture and patterns.
+
+## Required Reading (Priority Order)
+
+Read these rules in this order when working on the project:
+
+1. **[_master.mdc](./_master.mdc)** - Critical rules that always apply (PRIORITY 1)
+2. **[component-structure.mdc](./component-structure.mdc)** - Component patterns and structure
+3. **[coding-standards.mdc](./coding-standards.mdc)** - General coding standards and conventions
+4. **[api-architecture.mdc](./api-architecture.mdc)** - API integration patterns (when ready)
+5. **[data-handling.mdc](./data-handling.mdc)** - State and data management patterns
+6. **[validation.mdc](./validation.mdc)** - Form validation patterns (when needed)
+
+## Quick Reference
+
+### Project Tech Stack
+- **Framework**: React 18.2.0
+- **Routing**: React Router DOM 7.9.6
+- **UI Library**: React Bootstrap 2.10.10, Bootstrap 5.3.8
+- **Build Tool**: Vite 5.0.8
+- **Styling**: CSS files per component + Bootstrap classes
+- **File Extensions**: All JSX files use `.jsx` extension (required for Vite)
+
+### Key Architecture Decisions
+- Functional components only (no class components)
+- Component-based CSS architecture (one CSS file per component)
+- localStorage for persistence (demo mode - prepare for API)
+- React Router for navigation
+- Bootstrap for responsive layout
+
+### File Organization
+```
+src/
+  ├── components/     # Reusable components (Header.jsx, Footer.jsx, etc.)
+  ├── pages/         # Page-level components (Home.jsx, etc.)
+  ├── assets/        # Static assets (images, etc.)
+  ├── App.jsx        # Main app component with routes
+  └── main.jsx       # Entry point (Vite)
+```
+
+## Rules File Guide
+
+### Core Rules
+- **[_master.mdc](./_master.mdc)** - Must-read master rules with critical requirements
+- **[component-structure.mdc](./component-structure.mdc)** - How to structure components
+- **[coding-standards.mdc](./coding-standards.mdc)** - Naming conventions, code quality
+
+### Feature-Specific Rules
+- **[api-architecture.mdc](./api-architecture.mdc)** - API integration (prepare for future)
+- **[data-handling.mdc](./data-handling.mdc)** - State management and data patterns
+- **[validation.mdc](./validation.mdc)** - Form validation and error handling
+
+## Common Tasks Checklist
+
+When creating a new component:
+- [ ] Use functional component with hooks
+- [ ] Use `.jsx` extension for all JSX files (required for Vite)
+- [ ] Create matching CSS file (ComponentName.css)
+- [ ] Follow import order (React → Router → Third-party → Components → Assets → CSS)
+- [ ] Include `.jsx` extension in all component imports
+- [ ] Use PascalCase for file and component name
+- [ ] Export as default export
+- [ ] Include proper PropTypes or TypeScript types (when implemented)
+
+When adding navigation:
+- [ ] Use `useNavigate()` hook
+- [ ] Use `Link` for internal links
+- [ ] Add route to `App.jsx`
+- [ ] Test navigation flow
+
+When managing state:
+- [ ] Use `useState` for local state
+- [ ] Use `useEffect` for side effects
+- [ ] Clean up effects (event listeners, intervals)
+- [ ] Use `localStorage` for persistence (demo mode)
+
+## Important Notes
+
+- Currently in **demo mode** using localStorage
+- Prepare all code for future API integration
+- No hardcoded production data (acceptable only for demos)
+- Always use Bootstrap classes for responsive design
+- Include Header and Footer in page-level components
+
+## Questions?
+
+Refer to the specific rule file for detailed patterns and examples. The `_master.mdc` file contains the most critical rules that must always be followed.
